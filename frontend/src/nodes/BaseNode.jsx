@@ -122,8 +122,8 @@ export function NodeCard({ children, tone = 'blue', className, style }) {
     <div
       style={style}
       className={cn(
-        'relative w-[264px] overflow-hidden rounded-xl border border-border bg-card shadow-[0_8px_24px_-12px_oklch(0_0_0/0.18)] transition-shadow',
-        'hover:shadow-[0_16px_32px_-12px_oklch(0_0_0/0.22)]',
+        'relative w-[264px] overflow-hidden rounded-xl border border-border bg-card shadow-[0_8px_24px_-12px_oklch(0_0_0/0.18)] dark:shadow-[0_8px_24px_-12px_oklch(0_0_0/0.6)] transition-shadow',
+        'hover:shadow-[0_16px_32px_-12px_oklch(0_0_0/0.22)] dark:hover:shadow-[0_16px_32px_-12px_oklch(0_0_0/0.8)]',
         className,
       )}
     >

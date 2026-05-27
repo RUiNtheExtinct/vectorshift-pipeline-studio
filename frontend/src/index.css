@@ -279,6 +279,12 @@
     box-shadow: 0 8px 20px oklch(0 0 0 / 0.08);
   }
 
+  /* MiniMap renders an internal SVG that defaults to white background.
+     Make it transparent so the outer container's themed bg shows through. */
+  .react-flow__minimap-svg {
+    background: transparent !important;
+  }
+
   /* Cycle highlighting */
   .pipeline-node-in-cycle > div {
     box-shadow:
