@@ -17,7 +17,7 @@ const variablePattern = /\{\{\s*([A-Za-z_$][A-Za-z0-9_$]*)\s*\}\}/g;
 const TEXT_NODE_MIN_WIDTH = 264;
 const TEXT_NODE_MAX_WIDTH = 520;
 const TEXTAREA_MIN_HEIGHT = 96;
-const TEXTAREA_MAX_HEIGHT = 240;
+const TEXTAREA_MAX_HEIGHT = 360;
 
 function getTemplateVariables(text) {
   const variables = [];
@@ -85,16 +85,16 @@ export function TextNode({ id, data }) {
         inCycle={data?.inCycle}
       />
 
-      <p className="text-xs leading-relaxed text-slate-500">
+      <p className="text-xs leading-relaxed text-muted-foreground">
         Type{' '}
-        <span className="rounded bg-slate-100 px-1 py-0.5 font-mono text-[11px] text-slate-700">
+        <span className="rounded bg-muted px-1 py-0.5 font-mono text-[11px] text-foreground">
           {'{{ variable }}'}
         </span>{' '}
         to expose a left-side input handle.
       </p>
 
       <label className="grid gap-1.5">
-        <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+        <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
           Prompt
         </span>
         <textarea
@@ -102,9 +102,13 @@ export function TextNode({ id, data }) {
           onChange={handleTextChange}
           spellCheck="false"
           style={{ height: dimensions.textareaHeight }}
+          onWheelCapture={(event) => {
+            const el = event.currentTarget;
+            if (el.scrollHeight > el.clientHeight) event.stopPropagation();
+          }}
           className={cn(
-            'w-full resize-none rounded-md border bg-slate-50 px-3 py-2.5 font-mono text-[13px] leading-relaxed text-ink outline-none transition-[color,box-shadow,background]',
-            'focus-visible:border-brand-500 focus-visible:bg-white focus-visible:ring-[3px] focus-visible:ring-brand-500/25',
+            'nodrag nowheel w-full resize-none rounded-md border bg-muted px-3 py-2.5 font-mono text-[13px] leading-relaxed text-foreground outline-none transition-[color,box-shadow,background]',
+            'focus-visible:border-brand-500 focus-visible:bg-card focus-visible:ring-[3px] focus-visible:ring-brand-500/25',
             'overflow-y-auto',
           )}
         />
@@ -112,7 +116,7 @@ export function TextNode({ id, data }) {
 
       {variables.length > 0 && (
         <div className="flex flex-wrap items-center gap-1.5">
-          <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+          <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
             Variables
           </span>
           {variables.map((variableName) => (

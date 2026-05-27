@@ -36,7 +36,7 @@ const toneText = {
 /* ------------------------------------------------------------------ */
 
 const inputBase =
-  'w-full h-9 rounded-md border bg-slate-50 px-2.5 py-1.5 text-sm font-medium text-ink outline-none transition-[color,box-shadow,background] focus-visible:border-brand-500 focus-visible:bg-white focus-visible:ring-[3px] focus-visible:ring-brand-500/25';
+  'nodrag nowheel w-full h-9 rounded-md border bg-muted px-2.5 py-1.5 text-sm font-medium text-foreground outline-none transition-[color,box-shadow,background] focus-visible:border-brand-500 focus-visible:bg-card focus-visible:ring-[3px] focus-visible:ring-brand-500/25';
 
 const getFieldValue = (field, id, data) => {
   if (data?.[field.name] !== undefined) return data[field.name];
@@ -53,7 +53,7 @@ function NodeField({ field, id, data, updateNodeField }) {
 
   return (
     <label className="grid gap-1.5" htmlFor={fieldId}>
-      <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+      <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
         {field.label}
       </span>
       {field.type === 'select' ? (
@@ -122,7 +122,7 @@ export function NodeCard({ children, tone = 'blue', className, style }) {
     <div
       style={style}
       className={cn(
-        'relative w-[264px] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-[0_8px_24px_-12px_oklch(0_0_0/0.18)] transition-shadow',
+        'relative w-[264px] overflow-hidden rounded-xl border border-border bg-card shadow-[0_8px_24px_-12px_oklch(0_0_0/0.18)] transition-shadow',
         'hover:shadow-[0_16px_32px_-12px_oklch(0_0_0/0.22)]',
         className,
       )}
@@ -151,7 +151,7 @@ export function NodeCardHeader({ kicker, title, tone = 'slate', rank, inCycle })
         >
           {kicker}
         </span>
-        <h3 className="mt-0.5 truncate text-sm font-semibold text-ink">
+        <h3 className="mt-0.5 truncate text-sm font-semibold text-foreground">
           {title}
         </h3>
       </div>
@@ -159,7 +159,7 @@ export function NodeCardHeader({ kicker, title, tone = 'slate', rank, inCycle })
         {rank != null && (
           <span
             title={`Execution step ${rank}`}
-            className="inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-brand-50 px-1.5 font-mono text-[10px] font-semibold text-brand-700"
+            className="inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-brand-50 px-1.5 font-mono text-[10px] font-semibold text-brand-700 dark:bg-brand-900/50 dark:text-brand-200"
           >
             {rank}
           </span>
@@ -167,7 +167,7 @@ export function NodeCardHeader({ kicker, title, tone = 'slate', rank, inCycle })
         {inCycle && (
           <span
             title="This node is part of a cycle"
-            className="inline-flex h-5 items-center justify-center rounded-full bg-red-50 px-2 text-[10px] font-semibold uppercase tracking-wide text-red-700"
+            className="inline-flex h-5 items-center justify-center rounded-full bg-red-50 px-2 text-[10px] font-semibold uppercase tracking-wide text-red-700 dark:bg-red-950/60 dark:text-red-300"
           >
             Cycle
           </span>
@@ -199,7 +199,7 @@ export function BaseNode({ id, data, config }) {
         inCycle={data?.inCycle}
       />
       {config.description && (
-        <p className="text-xs leading-relaxed text-slate-500">
+        <p className="text-xs leading-relaxed text-muted-foreground">
           {config.description}
         </p>
       )}

@@ -77,7 +77,7 @@ export function CanvasToolbar() {
 
   return (
     <TooltipProvider delayDuration={250}>
-      <div className="absolute top-3 right-3 z-10 flex items-center gap-1 rounded-lg border border-slate-200 bg-white/90 p-1 shadow-sm backdrop-blur">
+      <div className="absolute top-3 right-3 z-10 flex items-center gap-1 rounded-lg border border-border bg-card/90 p-1 shadow-sm backdrop-blur">
         <input
           ref={fileInputRef}
           type="file"
@@ -101,11 +101,11 @@ export function CanvasToolbar() {
           </TooltipTrigger>
           <TooltipContent side="bottom">Export pipeline (JSON)</TooltipContent>
         </Tooltip>
-        <div className="mx-0.5 h-5 w-px bg-slate-200" />
+        <div className="mx-0.5 h-5 w-px bg-border" />
         <Tooltip>
           <TooltipTrigger asChild>
             <Button variant="ghost" size="icon" onClick={onClear} aria-label="Clear canvas" disabled={nodes.length === 0 && edges.length === 0}>
-              <Trash2 className="size-4 text-red-600" />
+              <Trash2 className="size-4 text-red-600 dark:text-red-400" />
             </Button>
           </TooltipTrigger>
           <TooltipContent side="bottom">Clear canvas</TooltipContent>

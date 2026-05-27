@@ -21,19 +21,27 @@ function StatTile({ label, value, hint, accent }) {
   return (
     <div
       className={cn(
-        'rounded-lg border bg-slate-50 p-3',
-        accent === 'success' && 'border-emerald-200 bg-emerald-50',
-        accent === 'danger' && 'border-red-200 bg-red-50',
+        'rounded-lg border bg-muted p-3',
+        accent === 'success' &&
+          'border-emerald-200 bg-emerald-50 dark:border-emerald-900/50 dark:bg-emerald-950/40',
+        accent === 'danger' &&
+          'border-red-200 bg-red-50 dark:border-red-900/50 dark:bg-red-950/40',
       )}
     >
-      <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+      <p
+        className={cn(
+          'text-[10px] font-semibold uppercase tracking-wide text-muted-foreground',
+          accent === 'success' && 'text-emerald-700 dark:text-emerald-300',
+          accent === 'danger' && 'text-red-700 dark:text-red-300',
+        )}
+      >
         {label}
       </p>
       <p
         className={cn(
-          'mt-1 font-mono text-2xl font-semibold tabular-nums text-ink',
-          accent === 'success' && 'text-emerald-700',
-          accent === 'danger' && 'text-red-700',
+          'mt-1 font-mono text-2xl font-semibold tabular-nums text-foreground',
+          accent === 'success' && 'text-emerald-700 dark:text-emerald-300',
+          accent === 'danger' && 'text-red-700 dark:text-red-300',
         )}
       >
         {value}
@@ -41,9 +49,9 @@ function StatTile({ label, value, hint, accent }) {
       {hint && (
         <p
           className={cn(
-            'mt-0.5 text-[11px] font-medium text-slate-500',
-            accent === 'success' && 'text-emerald-700',
-            accent === 'danger' && 'text-red-700',
+            'mt-0.5 text-[11px] font-medium text-muted-foreground',
+            accent === 'success' && 'text-emerald-700 dark:text-emerald-300',
+            accent === 'danger' && 'text-red-700 dark:text-red-300',
           )}
         >
           {hint}
@@ -68,7 +76,7 @@ export function PipelineResultDialog() {
           <>
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                <Loader2 className="size-5 animate-spin text-brand-600" />
+                <Loader2 className="size-5 animate-spin text-brand-600 dark:text-brand-400" />
                 Analyzing pipeline
               </DialogTitle>
               <DialogDescription>
@@ -83,9 +91,9 @@ export function PipelineResultDialog() {
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 {submission.result.is_dag ? (
-                  <CheckCircle2 className="size-5 text-emerald-600" />
+                  <CheckCircle2 className="size-5 text-emerald-600 dark:text-emerald-400" />
                 ) : (
-                  <AlertTriangle className="size-5 text-amber-600" />
+                  <AlertTriangle className="size-5 text-amber-600 dark:text-amber-400" />
                 )}
                 Pipeline analysis
               </DialogTitle>
@@ -109,20 +117,20 @@ export function PipelineResultDialog() {
 
             {submission.result.is_dag &&
               submission.result.execution_order?.length > 0 && (
-                <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                  <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+                <div className="rounded-lg border border-border bg-muted p-3">
+                  <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
                     Execution order
                   </p>
-                  <ol className="mt-2 flex flex-wrap items-center gap-1.5 font-mono text-[11px] text-slate-700">
+                  <ol className="mt-2 flex flex-wrap items-center gap-1.5 font-mono text-[11px] text-foreground">
                     {submission.result.execution_order.map((id, index) => (
                       <li
                         key={id}
-                        className="inline-flex items-center gap-1.5 rounded-md bg-white px-1.5 py-0.5 shadow-xs"
+                        className="inline-flex items-center gap-1.5 rounded-md bg-card px-1.5 py-0.5 shadow-xs"
                       >
-                        <span className="font-semibold text-brand-700">
+                        <span className="font-semibold text-brand-700 dark:text-brand-300">
                           {index + 1}
                         </span>
-                        <span className="text-slate-700">{id}</span>
+                        <span className="text-foreground">{id}</span>
                       </li>
                     ))}
                   </ol>
@@ -131,8 +139,8 @@ export function PipelineResultDialog() {
 
             {!submission.result.is_dag &&
               submission.result.cycle_node_ids?.length > 0 && (
-                <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
-                  <p className="text-[10px] font-semibold uppercase tracking-wide text-red-700">
+                <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-200">
+                  <p className="text-[10px] font-semibold uppercase tracking-wide text-red-700 dark:text-red-300">
                     Cycle members
                   </p>
                   <p className="mt-1 font-mono text-[12px]">
@@ -142,8 +150,8 @@ export function PipelineResultDialog() {
               )}
 
             {submission.result.invalid_edges?.length > 0 && (
-              <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
-                <p className="text-[10px] font-semibold uppercase tracking-wide text-amber-800">
+              <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900 dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-200">
+                <p className="text-[10px] font-semibold uppercase tracking-wide text-amber-800 dark:text-amber-300">
                   Invalid edges
                 </p>
                 <ul className="mt-1 grid gap-1 font-mono text-[12px]">
@@ -166,7 +174,7 @@ export function PipelineResultDialog() {
           <>
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                <XCircle className="size-5 text-red-600" />
+                <XCircle className="size-5 text-red-600 dark:text-red-400" />
                 Could not analyze pipeline
               </DialogTitle>
               <DialogDescription>
@@ -174,9 +182,9 @@ export function PipelineResultDialog() {
               </DialogDescription>
             </DialogHeader>
 
-            <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm leading-relaxed text-slate-700">
-              <p className="font-semibold text-ink">Make sure the backend is running:</p>
-              <pre className="mt-2 overflow-x-auto rounded bg-ink px-3 py-2 font-mono text-[12px] text-slate-100">
+            <div className="rounded-lg border border-border bg-muted p-3 text-sm leading-relaxed text-muted-foreground">
+              <p className="font-semibold text-foreground">Make sure the backend is running:</p>
+              <pre className="mt-2 overflow-x-auto rounded bg-foreground/90 px-3 py-2 font-mono text-[12px] text-background">
                 cd backend{'\n'}uvicorn main:app --reload
               </pre>
             </div>

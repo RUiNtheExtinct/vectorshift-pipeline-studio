@@ -3,9 +3,9 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* ------------------------------------------------------------------ */
-/* Design tokens                                                       */
-/* ------------------------------------------------------------------ */
+/* ================================================================== */
+/* Design tokens                                                      */
+/* ================================================================== */
 
 @theme {
   --font-sans:
@@ -15,7 +15,7 @@
     "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
     "Liberation Mono", monospace;
 
-  /* Brand */
+  /* Brand (same in both modes) */
   --color-brand-50: oklch(0.97 0.02 250);
   --color-brand-100: oklch(0.94 0.04 250);
   --color-brand-200: oklch(0.88 0.07 250);
@@ -27,7 +27,7 @@
   --color-brand-800: oklch(0.36 0.13 250);
   --color-brand-900: oklch(0.28 0.10 250);
 
-  /* Node-tone accents (slightly desaturated, product-feeling) */
+  /* Node tones (light mode default; dark overrides below) */
   --color-tone-green: oklch(0.62 0.14 158);
   --color-tone-violet: oklch(0.55 0.18 285);
   --color-tone-blue: oklch(0.58 0.17 250);
@@ -38,18 +38,11 @@
   --color-tone-slate: oklch(0.48 0.03 250);
   --color-tone-black: oklch(0.25 0.02 250);
 
-  /* Surfaces */
-  --color-surface-canvas: oklch(0.985 0.005 250);
-  --color-surface-panel: oklch(1 0 0);
-  --color-surface-sidebar: oklch(0.985 0.005 250);
-
-  /* Lines & ink */
-  --color-line: oklch(0.92 0.01 250);
-  --color-line-strong: oklch(0.86 0.015 250);
+  /* Ink */
   --color-ink: oklch(0.21 0.02 250);
   --color-ink-muted: oklch(0.50 0.02 250);
 
-  /* shadcn-required tokens (mapped to our palette) */
+  /* shadcn-required tokens */
   --radius: 0.75rem;
   --color-background: oklch(0.985 0.005 250);
   --color-foreground: oklch(0.21 0.02 250);
@@ -70,11 +63,90 @@
   --color-border: oklch(0.92 0.01 250);
   --color-input: oklch(0.92 0.01 250);
   --color-ring: oklch(0.60 0.18 250);
+
+  /* Surfaces (light) */
+  --color-canvas: oklch(0.985 0.005 250);
+  --color-panel: oklch(1 0 0);
+  --color-panel-soft: oklch(0.97 0.005 250);
+
+  /* Component-level (light) */
+  --color-rf-edge: oklch(0.65 0.02 250);
+  --color-rf-handle-bg: oklch(0.21 0.02 250);
+  --color-rf-handle-border: oklch(1 0 0);
+  --color-rf-control-bg: oklch(1 0 0);
+  --color-rf-control-fg: oklch(0.21 0.02 250);
+  --color-rf-minimap-bg: oklch(1 0 0 / 0.88);
+  --color-rf-mask: oklch(0.21 0.02 250 / 0.06);
+  --color-scrollbar-track: transparent;
+  --color-scrollbar-thumb: oklch(0.80 0.01 250);
+  --color-scrollbar-thumb-hover: oklch(0.65 0.02 250);
+
+  /* Line tokens used by ReactFlow rules */
+  --color-line: oklch(0.92 0.01 250);
+  --color-line-strong: oklch(0.86 0.015 250);
 }
 
-/* ------------------------------------------------------------------ */
-/* Base                                                                */
-/* ------------------------------------------------------------------ */
+/* ================================================================== */
+/* Dark mode overrides                                                */
+/* ================================================================== */
+
+.dark {
+  --color-background: oklch(0.16 0.015 250);
+  --color-foreground: oklch(0.96 0.01 250);
+  --color-card: oklch(0.21 0.02 250);
+  --color-card-foreground: oklch(0.96 0.01 250);
+  --color-popover: oklch(0.22 0.02 250);
+  --color-popover-foreground: oklch(0.96 0.01 250);
+  --color-primary: oklch(0.70 0.18 250);
+  --color-primary-foreground: oklch(0.12 0.02 250);
+  --color-secondary: oklch(0.26 0.02 250);
+  --color-secondary-foreground: oklch(0.90 0.01 250);
+  --color-muted: oklch(0.24 0.018 250);
+  --color-muted-foreground: oklch(0.68 0.02 250);
+  --color-accent: oklch(0.27 0.02 250);
+  --color-accent-foreground: oklch(0.95 0.01 250);
+  --color-destructive: oklch(0.65 0.18 25);
+  --color-destructive-foreground: oklch(0.12 0.02 250);
+  --color-border: oklch(0.30 0.02 250);
+  --color-input: oklch(0.30 0.02 250);
+  --color-ring: oklch(0.70 0.18 250);
+
+  --color-canvas: oklch(0.14 0.015 250);
+  --color-panel: oklch(0.21 0.02 250);
+  --color-panel-soft: oklch(0.26 0.02 250);
+
+  --color-ink: oklch(0.96 0.01 250);
+  --color-ink-muted: oklch(0.68 0.02 250);
+
+  /* Brighter tones for visibility on dark surfaces */
+  --color-tone-green: oklch(0.74 0.14 158);
+  --color-tone-violet: oklch(0.70 0.18 285);
+  --color-tone-blue: oklch(0.72 0.16 250);
+  --color-tone-amber: oklch(0.82 0.14 70);
+  --color-tone-red: oklch(0.72 0.18 25);
+  --color-tone-cyan: oklch(0.78 0.12 210);
+  --color-tone-pink: oklch(0.74 0.18 350);
+  --color-tone-slate: oklch(0.70 0.03 250);
+  --color-tone-black: oklch(0.92 0.01 250);
+
+  --color-rf-edge: oklch(0.55 0.02 250);
+  --color-rf-handle-bg: oklch(0.92 0.01 250);
+  --color-rf-handle-border: oklch(0.21 0.02 250);
+  --color-rf-control-bg: oklch(0.24 0.018 250);
+  --color-rf-control-fg: oklch(0.92 0.01 250);
+  --color-rf-minimap-bg: oklch(0.21 0.02 250 / 0.85);
+  --color-rf-mask: oklch(0 0 0 / 0.4);
+
+  --color-scrollbar-thumb: oklch(0.36 0.02 250);
+  --color-scrollbar-thumb-hover: oklch(0.50 0.02 250);
+
+  --color-line: oklch(0.30 0.02 250);
+  --color-line-strong: oklch(0.40 0.02 250);
+}
+
+/* ================================================================== */
+/* Base                                                               */
+/* ================================================================== */
 
 @layer base {
   * {
@@ -89,22 +161,48 @@
 
   body {
     margin: 0;
-    background-color: var(--color-surface-canvas);
-    color: var(--color-ink);
+    background-color: var(--color-background);
+    color: var(--color-foreground);
     font-family: var(--font-sans);
     font-feature-settings: "cv11", "ss01", "ss02";
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* Firefox scrollbars */
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-scrollbar-thumb) var(--color-scrollbar-track);
   }
 
   ::selection {
-    background-color: oklch(0.60 0.18 250 / 0.18);
+    background-color: oklch(0.60 0.18 250 / 0.25);
+    color: oklch(0.99 0.005 250);
+  }
+
+  /* WebKit scrollbars (Chrome, Safari, Edge) */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-scrollbar-track);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-scrollbar-thumb);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    border-radius: 8px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-scrollbar-thumb-hover);
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-corner {
+    background: transparent;
   }
 }
 
-/* ------------------------------------------------------------------ */
-/* ReactFlow restyling                                                 */
-/* ------------------------------------------------------------------ */
+/* ================================================================== */
+/* ReactFlow restyling                                                */
+/* ================================================================== */
 
 @layer components {
   .react-flow__attribution {
@@ -112,7 +210,7 @@
   }
 
   .react-flow__edge-path {
-    stroke: oklch(0.65 0.02 250);
+    stroke: var(--color-rf-edge);
     stroke-width: 1.5;
     transition: stroke 120ms ease;
   }
@@ -131,8 +229,8 @@
   .react-flow__handle {
     width: 10px;
     height: 10px;
-    background: var(--color-ink);
-    border: 2px solid white;
+    background: var(--color-rf-handle-bg);
+    border: 2px solid var(--color-rf-handle-border);
     box-shadow: 0 0 0 1px var(--color-line-strong);
     transition: transform 120ms ease, box-shadow 120ms ease;
   }
@@ -146,17 +244,17 @@
     overflow: hidden;
     border: 1px solid var(--color-line);
     border-radius: 8px;
-    background: white;
-    box-shadow: 0 8px 20px oklch(0 0 0 / 0.06);
+    background: var(--color-rf-control-bg);
+    box-shadow: 0 8px 20px oklch(0 0 0 / 0.08);
   }
 
   .react-flow__controls-button {
     width: 32px;
     height: 32px;
-    background: white;
+    background: var(--color-rf-control-bg);
     border: none;
     border-bottom: 1px solid var(--color-line);
-    color: var(--color-ink);
+    color: var(--color-rf-control-fg);
   }
 
   .react-flow__controls-button:last-child {
@@ -164,7 +262,7 @@
   }
 
   .react-flow__controls-button:hover {
-    background: var(--color-secondary);
+    background: var(--color-panel-soft);
   }
 
   .react-flow__controls-button svg {
@@ -176,12 +274,12 @@
   .react-flow__minimap {
     border: 1px solid var(--color-line);
     border-radius: 8px;
-    background: oklch(1 0 0 / 0.85);
+    background: var(--color-rf-minimap-bg);
     backdrop-filter: blur(8px);
-    box-shadow: 0 8px 20px oklch(0 0 0 / 0.06);
+    box-shadow: 0 8px 20px oklch(0 0 0 / 0.08);
   }
 
-  /* Cycle highlighting: applied to nodes that participate in a cycle. */
+  /* Cycle highlighting */
   .pipeline-node-in-cycle > div {
     box-shadow:
       0 0 0 2px oklch(0.60 0.18 25 / 0.6),
@@ -189,7 +287,7 @@
   }
 
   .pipeline-edge-in-cycle .react-flow__edge-path {
-    stroke: oklch(0.60 0.18 25);
+    stroke: var(--color-destructive);
     stroke-width: 2;
   }
 }

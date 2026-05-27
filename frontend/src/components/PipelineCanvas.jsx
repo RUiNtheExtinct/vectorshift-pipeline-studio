@@ -2,6 +2,7 @@ import * as React from 'react';
 import ReactFlow, { Background, BackgroundVariant, Controls, MiniMap } from 'reactflow';
 import { shallow } from 'zustand/shallow';
 import { useStore } from '@/store';
+import { useTheme } from '@/lib/theme';
 import { createInitialNodeData, nodeDefinitions, nodeTypes } from '@/nodes/nodeDefinitions';
 import { NodeContextMenu } from './NodeContextMenu';
 import { EmptyCanvasHint } from './EmptyCanvasHint';
@@ -62,6 +63,11 @@ export function PipelineCanvas() {
     onEdgesChange,
     onConnect,
   } = useStore(selector, shallow);
+
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === 'dark';
+  const backgroundColor = isDark ? '#334155' : '#cbd5e1';
+  const maskColor = isDark ? 'rgba(0, 0, 0, 0.45)' : 'rgba(15, 23, 42, 0.06)';
 
   /* --- Decorated nodes/edges based on last analysis ---------------- */
 
@@ -164,7 +170,7 @@ export function PipelineCanvas() {
   return (
     <div
       ref={wrapperRef}
-      className="relative h-full min-h-0 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm"
+      className="relative h-full min-h-0 overflow-hidden rounded-xl border border-border bg-card shadow-sm"
     >
       <ReactFlow
         nodes={decoratedNodes}
@@ -186,7 +192,7 @@ export function PipelineCanvas() {
         fitView
       >
         <Background
-          color="#cbd5e1"
+          color={backgroundColor}
           gap={GRID_SIZE}
           size={1.2}
           variant={BackgroundVariant.Dots}
@@ -198,7 +204,7 @@ export function PipelineCanvas() {
           nodeStrokeWidth={2}
           nodeColor={minimapNodeColor}
           nodeStrokeColor={minimapNodeStroke}
-          maskColor="rgba(15, 23, 42, 0.06)"
+          maskColor={maskColor}
         />
       </ReactFlow>
       <CanvasToolbar />

@@ -45,8 +45,8 @@ export function DraggableNodeCard({ type, label, description, tone = 'slate' }) 
             tabIndex={0}
             aria-label={`${label}: ${description}`}
             className={cn(
-              'group relative grid cursor-grab select-none gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-left shadow-sm transition-all',
-              'hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md',
+              'group relative grid cursor-grab select-none gap-1.5 rounded-lg border border-border bg-card px-3 py-2.5 text-left shadow-sm transition-all',
+              'hover:-translate-y-0.5 hover:border-line-strong hover:shadow-md',
               'focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-brand-500/30 focus-visible:border-brand-500',
             )}
           >
@@ -58,9 +58,9 @@ export function DraggableNodeCard({ type, label, description, tone = 'slate' }) 
                   toneDot[tone] ?? toneDot.slate,
                 )}
               />
-              <span className="text-sm font-semibold text-ink">{label}</span>
+              <span className="text-sm font-semibold text-foreground">{label}</span>
             </div>
-            <p className="line-clamp-2 text-[11px] leading-snug text-slate-500">
+            <p className="line-clamp-2 text-[11px] leading-snug text-muted-foreground">
               {description}
             </p>
           </div>

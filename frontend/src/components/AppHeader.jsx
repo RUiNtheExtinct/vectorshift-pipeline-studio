@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Loader2, Play } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { useStore } from '@/store';
 import { submitPipeline } from '@/submit';
 
@@ -25,7 +26,7 @@ export function AppHeader() {
   };
 
   return (
-    <header className="flex items-center justify-between gap-4 border-b border-slate-200 bg-white px-6 py-3">
+    <header className="flex items-center justify-between gap-4 border-b border-border bg-card px-6 py-3">
       <div className="flex items-center gap-3 min-w-0">
         <img
           src="/logo.svg"
@@ -34,16 +35,17 @@ export function AppHeader() {
           className="size-10 shrink-0 rounded-lg shadow-sm"
         />
         <div className="min-w-0">
-          <span className="block text-[10px] font-semibold uppercase tracking-[0.12em] text-brand-600">
+          <span className="block text-[10px] font-semibold uppercase tracking-[0.12em] text-brand-600 dark:text-brand-400">
             VectorShift Assessment
           </span>
-          <h1 className="text-lg font-semibold tracking-tight text-ink truncate">
+          <h1 className="text-lg font-semibold tracking-tight text-foreground truncate">
             Pipeline Studio
           </h1>
         </div>
       </div>
 
       <div className="flex items-center gap-2">
+        <ThemeToggle />
         <Button
           variant="primary"
           size="default"

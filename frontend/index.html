@@ -18,6 +18,23 @@
       rel="stylesheet"
     />
     <title>Pipeline Studio</title>
+    <script>
+      // Resolve theme BEFORE React mounts to prevent a flash of light theme.
+      (function () {
+        try {
+          var stored = window.localStorage.getItem('pipeline-studio:theme:v1');
+          var theme = stored === 'light' || stored === 'dark' ? stored : 'system';
+          var resolved =
+            theme === 'system'
+              ? window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light'
+              : theme;
+          if (resolved === 'dark') document.documentElement.classList.add('dark');
+          document.documentElement.style.colorScheme = resolved;
+        } catch (_) {}
+      })();
+    </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
