@@ -1,79 +1,68 @@
 # Render Blueprint for Pipeline Studio.
 #
-# Deploys two services:
-#   1. pipeline-studio-backend   — FastAPI app (Python web service)
-#   2. pipeline-studio-frontend  — Vite static site (built from frontend/dist)
+# Two services:
+#   1. pipeline-studio-backend   FastAPI web service (Python)
+#   2. vectorshift-studio        Vite static site (built from frontend/dist)
 #
-# After applying this blueprint, Render automatically wires:
-#   • The backend hostname into the frontend's VITE_API_BASE_URL at build time
-#     (the build command prepends https:// and strips any port).
-#   • The frontend hostname into the backend's FRONTEND_HOST environment;
-#     main.py composes that into CORS_ALLOWED_ORIGINS at startup.
+# Cross-wired automatically:
+#   - The frontend exports BACKEND_HOST and the build prepends https:// to
+#     produce VITE_API_BASE_URL=https://<backend-host>.
+#   - The backend reads FRONTEND_HOST and appends https://<frontend-host>
+#     to CORS_ALLOWED_ORIGINS at startup (see main.py _resolve_origins).
 #
-# No manual environment configuration required on first deploy.
-# https://render.com/docs/blueprint-spec
+# Apply: Render dashboard → New → Blueprint → pick this repo → Apply.
+# Docs: https://render.com/docs/infrastructure-as-code
 
-projects:
-  - name: vectorshift-pipeline-studio
-    environments:
-      - name: production
-        services:
-          # --------------------------------------------------------------------- #
-          # Backend                                                                #
-          # --------------------------------------------------------------------- #
-          - type: web
-            name: pipeline-studio-backend
-            runtime: python
-            rootDir: backend
-            plan: free
-            autoDeploy: true
-            healthCheckPath: /health
-            buildCommand: pip install -r requirements.txt
-            startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
-            envVars:
-              - key: PYTHON_VERSION
-                value: 3.12.5
-              - key: LOG_LEVEL
-                value: INFO
-              - key: FRONTEND_HOST
-                fromService:
-                  type: web
-                  name: pipeline-studio-frontend
-                  property: host
+services:
+  - type: web
+    name: pipeline-studio-backend
+    runtime: python
+    rootDir: backend
+    plan: free
+    autoDeploy: true
+    healthCheckPath: /health
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.5"
+      - key: LOG_LEVEL
+        value: INFO
+      - key: FRONTEND_HOST
+        fromService:
+          type: web
+          name: vectorshift-studio
+          property: host
 
-          # --------------------------------------------------------------------- #
-          # Frontend (Vite static site)                                            #
-          # --------------------------------------------------------------------- #
-          - type: web
-            name: vectorshift-studio
-            runtime: static
-            rootDir: frontend
-            autoDeploy: true
-            buildCommand: |
-              npm ci
-              export VITE_API_BASE_URL="https://${BACKEND_HOST}"
-              npm run build
-            staticPublishPath: ./dist
-            pullRequestPreviewsEnabled: true
-            headers:
-              - path: /*
-                name: X-Frame-Options
-                value: DENY
-              - path: /*
-                name: X-Content-Type-Options
-                value: nosniff
-              - path: /*
-                name: Referrer-Policy
-                value: strict-origin-when-cross-origin
-            routes:
-              - type: rewrite
-                source: /*
-                destination: /index.html
-            envVars:
-              - key: NODE_VERSION
-                value: 20.18.0
-              - key: BACKEND_HOST
-                fromService:
-                  type: web
-                  name: pipeline-studio-backend
-                  property: host
+  - type: web
+    runtime: static
+    name: vectorshift-studio
+    rootDir: frontend
+    autoDeploy: true
+    buildCommand: |
+      npm ci
+      export VITE_API_BASE_URL="https://${BACKEND_HOST}"
+      npm run build
+    staticPublishPath: ./dist
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: NODE_VERSION
+        value: "20.18.0"
+      - key: BACKEND_HOST
+        fromService:
+          type: web
+          name: pipeline-studio-backend
+          property: host
