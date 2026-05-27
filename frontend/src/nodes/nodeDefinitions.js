@@ -1,5 +1,5 @@
-import { createNodeComponent } from './BaseNode';
-import { TextNode } from './textNode';
+import { createNodeComponent } from './BaseNode.jsx';
+import { TextNode } from './TextNode.jsx';
 
 export const nodeDefinitions = {
   customInput: {
@@ -66,6 +66,9 @@ export const nodeDefinitions = {
   },
   text: {
     label: 'Text',
+    tone: 'black',
+    description:
+      'Compose prompt text and expose {{ variables }} as left-side inputs.',
     component: TextNode,
   },
   transform: {
@@ -179,6 +182,7 @@ export const toolbarNodes = Object.entries(nodeDefinitions).map(
   ([type, definition]) => ({
     type,
     label: definition.label,
+    tone: definition.tone ?? 'slate',
     description:
       definition.description ??
       'Compose prompt text and expose variables as node inputs.',
