@@ -4,13 +4,18 @@
 #   1. pipeline-studio-backend   FastAPI web service (Python)
 #   2. vectorshift-studio        Vite static site (built from frontend/dist)
 #
-# Cross-wired automatically:
-#   - The frontend exports BACKEND_HOST and the build prepends https:// to
-#     produce VITE_API_BASE_URL=https://<backend-host>.
-#   - The backend reads FRONTEND_HOST and appends https://<frontend-host>
-#     to CORS_ALLOWED_ORIGINS at startup (see main.py _resolve_origins).
+# Wiring (one manual step):
+#   On first deploy Render will prompt you to set:
+#     - VITE_API_BASE_URL on the static site (e.g. https://pipeline-studio-backend.onrender.com)
+#     - FRONTEND_HOST on the backend (e.g. vectorshift-studio.onrender.com)
+#   These are marked sync:false so the dashboard prompts for them.
 #
-# Apply: Render dashboard → New → Blueprint → pick this repo → Apply.
+# Why not fromService: Render's `property: host` on a build-time env returns
+# only the service slug (e.g. "pipeline-studio-backend"), not the FQDN. That
+# produced URLs like https://pipeline-studio-backend which fail DNS. Setting
+# explicit values on the dashboard is the reliable path.
+#
+# Apply: Render dashboard -> New -> Blueprint -> pick this repo -> Apply.
 # Docs: https://render.com/docs/infrastructure-as-code
 
 projects:
@@ -33,20 +38,14 @@ projects:
               - key: LOG_LEVEL
                 value: INFO
               - key: FRONTEND_HOST
-                fromService:
-                  type: web
-                  name: vectorshift-studio
-                  property: host
+                sync: false
 
           - type: web
             runtime: static
             name: vectorshift-studio
             rootDir: frontend
             autoDeploy: true
-            buildCommand: |
-              npm ci
-              export VITE_API_BASE_URL="https://${BACKEND_HOST}"
-              npm run build
+            buildCommand: npm ci && npm run build
             staticPublishPath: ./dist
             headers:
               - path: /*
@@ -65,8 +64,5 @@ projects:
             envVars:
               - key: NODE_VERSION
                 value: "20.18.0"
-              - key: BACKEND_HOST
-                fromService:
-                  type: web
-                  name: pipeline-studio-backend
-                  property: host
+              - key: VITE_API_BASE_URL
+                sync: false

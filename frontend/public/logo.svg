@@ -1,11 +1,37 @@
-<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="512" height="512" rx="108" fill="#101827"/>
-  <path d="M142 329L256 181L370 329" stroke="#F8FAFC" stroke-width="52" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M256 181V332" stroke="#8FB4FF" stroke-width="34" stroke-linecap="round"/>
-  <path d="M168 329H344" stroke="#39D98A" stroke-width="34" stroke-linecap="round"/>
-  <circle cx="142" cy="329" r="34" fill="#2563EB"/>
-  <circle cx="256" cy="181" r="34" fill="#39D98A"/>
-  <circle cx="370" cy="329" r="34" fill="#8FB4FF"/>
-  <path d="M318 245H386L358 217" stroke="#F8FAFC" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M386 245L358 273" stroke="#F8FAFC" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="Pipeline Studio">
+  <!-- Brand-blue rounded tile -->
+  <rect width="512" height="512" rx="112" ry="112" fill="#2563eb"/>
+
+  <!--
+    Edges as absolute-coordinate polygons (no transforms = no rasterizer
+    quirks). Each edge is a 28px-wide rectangle from a source node center
+    to the merge node center. Math:
+      source A = (160, 160)  -> merge = (336, 256)
+      vector  = (176, 96)    length L = 201.0
+      unit    = (0.876, 0.477)
+      perpendicular unit = (-0.477, 0.876)  (rotate 90° CCW)
+      half-width offset = 14 * perp = (-6.68, 12.27)
+      polygon corners = source ± offset, merge ± offset
+  -->
+  <!-- Top edge: (160,160) -> (336,256), half-width 14 -->
+  <polygon
+    points="153.32,172.27 166.68,147.73 342.68,243.73 329.32,268.27"
+    fill="#ffffff"
+  />
+  <!-- Bottom edge: (160,352) -> (336,256), mirrored about y=256 -->
+  <polygon
+    points="166.68,364.27 153.32,339.73 329.32,243.73 342.68,268.27"
+    fill="#ffffff"
+  />
+
+  <!-- Source nodes: dark-blue ring (outer) + white center -->
+  <circle cx="160" cy="160" r="58" fill="#1d4ed8"/>
+  <circle cx="160" cy="160" r="44" fill="#ffffff"/>
+
+  <circle cx="160" cy="352" r="58" fill="#1d4ed8"/>
+  <circle cx="160" cy="352" r="44" fill="#ffffff"/>
+
+  <!-- Merge node (larger): dark-blue ring + white center -->
+  <circle cx="336" cy="256" r="76" fill="#1d4ed8"/>
+  <circle cx="336" cy="256" r="60" fill="#ffffff"/>
 </svg>
