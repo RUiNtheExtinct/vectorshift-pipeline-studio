@@ -36,8 +36,13 @@ export function NodeContextMenu({ menu, onClose }) {
   const copyNodeId = async () => {
     try {
       await navigator.clipboard.writeText(node.id);
-    } catch {
-      window.prompt('Copy node ID', node.id);
+    } catch (err) {
+      // Clipboard API requires a secure context (HTTPS or localhost). Both
+      // our local dev and Render deploy meet this, so this branch is
+      // effectively unreachable. Log defensively rather than show a
+      // browser-native prompt.
+      // eslint-disable-next-line no-console
+      console.warn('Could not copy node id to clipboard:', err);
     }
     onClose();
   };

@@ -202,98 +202,169 @@
 
 /* ================================================================== */
 /* ReactFlow restyling                                                */
+/*                                                                    */
+/* Intentionally OUTSIDE @layer so these rules beat reactflow's own   */
+/* unlayered stylesheet in the cascade. !important is added to        */
+/* properties ReactFlow sets inline (background, fill).                */
 /* ================================================================== */
 
-@layer components {
-  .react-flow__attribution {
-    display: none !important;
-  }
+.react-flow__attribution {
+  display: none !important;
+}
 
-  .react-flow__edge-path {
-    stroke: var(--color-rf-edge);
-    stroke-width: 1.5;
-    transition: stroke 120ms ease;
-  }
+.react-flow__edge-path {
+  stroke: var(--color-rf-edge);
+  stroke-width: 1.5;
+  transition: stroke 120ms ease;
+}
 
-  .react-flow__edge.selected .react-flow__edge-path,
-  .react-flow__edge:focus .react-flow__edge-path,
-  .react-flow__edge:focus-visible .react-flow__edge-path {
-    stroke: var(--color-brand-500);
-    stroke-width: 2;
-  }
+.react-flow__edge.selected .react-flow__edge-path,
+.react-flow__edge:focus .react-flow__edge-path,
+.react-flow__edge:focus-visible .react-flow__edge-path {
+  stroke: var(--color-brand-500);
+  stroke-width: 2;
+}
 
-  .react-flow__edge.animated .react-flow__edge-path {
-    stroke-dasharray: 6 4;
-  }
+.react-flow__edge.animated .react-flow__edge-path {
+  stroke-dasharray: 6 4;
+}
 
-  .react-flow__handle {
-    width: 10px;
-    height: 10px;
-    background: var(--color-rf-handle-bg);
-    border: 2px solid var(--color-rf-handle-border);
-    box-shadow: 0 0 0 1px var(--color-line-strong);
-    transition: transform 120ms ease, box-shadow 120ms ease;
-  }
+/* Visible handle (small) + invisible larger hit area via ::before. */
+.react-flow__handle {
+  width: 10px;
+  height: 10px;
+  background: var(--color-rf-handle-bg) !important;
+  border: 2px solid var(--color-rf-handle-border) !important;
+  box-shadow: 0 0 0 1px var(--color-line-strong);
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
 
-  .react-flow__handle:hover {
-    transform: scale(1.2);
-    box-shadow: 0 0 0 2px var(--color-brand-300);
-  }
+.react-flow__handle::before {
+  content: "";
+  position: absolute;
+  inset: -10px;
+  border-radius: 50%;
+}
 
-  .react-flow__controls {
-    overflow: hidden;
-    border: 1px solid var(--color-line);
-    border-radius: 8px;
-    background: var(--color-rf-control-bg);
-    box-shadow: 0 8px 20px oklch(0 0 0 / 0.08);
-  }
+.react-flow__handle:hover {
+  transform: scale(1.25);
+  box-shadow: 0 0 0 2px var(--color-brand-300);
+}
 
-  .react-flow__controls-button {
-    width: 32px;
-    height: 32px;
-    background: var(--color-rf-control-bg);
-    border: none;
-    border-bottom: 1px solid var(--color-line);
-    color: var(--color-rf-control-fg);
-  }
+.react-flow__handle.connectionindicator {
+  cursor: crosshair;
+}
 
-  .react-flow__controls-button:last-child {
-    border-bottom: none;
-  }
+/* Controls: themed icon-buttons. */
+.react-flow__controls {
+  overflow: hidden;
+  border: 1px solid var(--color-line) !important;
+  border-radius: 8px !important;
+  background: var(--color-rf-control-bg) !important;
+  box-shadow: 0 8px 20px oklch(0 0 0 / 0.08) !important;
+}
 
-  .react-flow__controls-button:hover {
-    background: var(--color-panel-soft);
-  }
+.react-flow__controls-button {
+  width: 32px !important;
+  height: 32px !important;
+  background: var(--color-rf-control-bg) !important;
+  border: none !important;
+  border-bottom: 1px solid var(--color-line) !important;
+  color: var(--color-rf-control-fg) !important;
+}
 
-  .react-flow__controls-button svg {
-    fill: currentColor;
-    max-width: 14px;
-    max-height: 14px;
-  }
+.react-flow__controls-button:last-child {
+  border-bottom: none !important;
+}
 
-  .react-flow__minimap {
-    border: 1px solid var(--color-line);
-    border-radius: 8px;
-    background: var(--color-rf-minimap-bg);
-    backdrop-filter: blur(8px);
-    box-shadow: 0 8px 20px oklch(0 0 0 / 0.08);
-  }
+.react-flow__controls-button:hover {
+  background: var(--color-panel-soft) !important;
+}
 
-  /* MiniMap renders an internal SVG that defaults to white background.
-     Make it transparent so the outer container's themed bg shows through. */
-  .react-flow__minimap-svg {
-    background: transparent !important;
-  }
+.react-flow__controls-button svg {
+  fill: currentColor !important;
+  max-width: 14px;
+  max-height: 14px;
+}
 
-  /* Cycle highlighting */
-  .pipeline-node-in-cycle > div {
-    box-shadow:
-      0 0 0 2px oklch(0.60 0.18 25 / 0.6),
-      0 8px 24px -12px oklch(0 0 0 / 0.2);
-  }
+/* MiniMap container + internal SVG. */
+.react-flow__minimap {
+  border: 1px solid var(--color-line) !important;
+  border-radius: 8px !important;
+  background: var(--color-rf-minimap-bg) !important;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 20px oklch(0 0 0 / 0.08) !important;
+}
 
-  .pipeline-edge-in-cycle .react-flow__edge-path {
-    stroke: var(--color-destructive);
-    stroke-width: 2;
+.react-flow__minimap svg,
+.react-flow__minimap-svg,
+svg.react-flow__minimap-svg {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* Cycle highlighting */
+.pipeline-node-in-cycle > div {
+  box-shadow:
+    0 0 0 2px oklch(0.60 0.18 25 / 0.6),
+    0 8px 24px -12px oklch(0 0 0 / 0.2);
+}
+
+.pipeline-edge-in-cycle .react-flow__edge-path {
+  stroke: var(--color-destructive);
+  stroke-width: 2;
+}
+
+/* ================================================================== */
+/* Theme switch view transition                                       */
+/*                                                                    */
+/* The new theme reveals as a circle expanding from the toggle's      */
+/* click point. Coordinates are stamped on <html> by the theme        */
+/* provider. Unsupported browsers (Safari, Firefox) ignore these      */
+/* rules entirely and get an instant flip — no breakage.              */
+/* ================================================================== */
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+  /* Outgoing theme lingers a little while the new one sweeps in, then fades.
+     Gives the reveal a soft trailing edge instead of a hard cut. */
+  animation: theme-fade-out 1100ms cubic-bezier(0.6, 0, 0.3, 1) forwards;
+}
+
+::view-transition-new(root) {
+  z-index: 2;
+  /* ease-in-out-quart: slow start, accelerate through the middle, glide out.
+     1100ms gives the wave room to be appreciated without feeling laggy. */
+  animation: theme-reveal 1100ms cubic-bezier(0.77, 0, 0.18, 1) forwards;
+  clip-path: circle(0% at var(--theme-transition-x, 50%) var(--theme-transition-y, 50%));
+}
+
+@keyframes theme-reveal {
+  to {
+    clip-path: circle(160% at var(--theme-transition-x, 50%) var(--theme-transition-y, 50%));
+  }
+}
+
+@keyframes theme-fade-out {
+  0%,
+  60% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+    clip-path: none;
   }
 }
