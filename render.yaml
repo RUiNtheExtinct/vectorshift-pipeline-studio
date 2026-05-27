@@ -13,56 +13,60 @@
 # Apply: Render dashboard → New → Blueprint → pick this repo → Apply.
 # Docs: https://render.com/docs/infrastructure-as-code
 
-services:
-  - type: web
-    name: pipeline-studio-backend
-    runtime: python
-    rootDir: backend
-    plan: free
-    autoDeploy: true
-    healthCheckPath: /health
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
-    envVars:
-      - key: PYTHON_VERSION
-        value: "3.12.5"
-      - key: LOG_LEVEL
-        value: INFO
-      - key: FRONTEND_HOST
-        fromService:
-          type: web
-          name: vectorshift-studio
-          property: host
+projects:
+  - name: vectorshift-studio
+    environments:
+      - name: production
+        services:
+          - type: web
+            name: pipeline-studio-backend
+            runtime: python
+            rootDir: backend
+            plan: free
+            autoDeploy: true
+            healthCheckPath: /health
+            buildCommand: pip install -r requirements.txt
+            startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+            envVars:
+              - key: PYTHON_VERSION
+                value: "3.12.5"
+              - key: LOG_LEVEL
+                value: INFO
+              - key: FRONTEND_HOST
+                fromService:
+                  type: web
+                  name: vectorshift-studio
+                  property: host
 
-  - type: web
-    runtime: static
-    name: vectorshift-studio
-    rootDir: frontend
-    autoDeploy: true
-    buildCommand: |
-      npm ci
-      export VITE_API_BASE_URL="https://${BACKEND_HOST}"
-      npm run build
-    staticPublishPath: ./dist
-    headers:
-      - path: /*
-        name: X-Frame-Options
-        value: DENY
-      - path: /*
-        name: X-Content-Type-Options
-        value: nosniff
-      - path: /*
-        name: Referrer-Policy
-        value: strict-origin-when-cross-origin
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
-    envVars:
-      - key: NODE_VERSION
-        value: "20.18.0"
-      - key: BACKEND_HOST
-        fromService:
-          type: web
-          name: pipeline-studio-backend
-          property: host
+          - type: web
+            runtime: static
+            name: vectorshift-studio
+            rootDir: frontend
+            autoDeploy: true
+            buildCommand: |
+              npm ci
+              export VITE_API_BASE_URL="https://${BACKEND_HOST}"
+              npm run build
+            staticPublishPath: ./dist
+            headers:
+              - path: /*
+                name: X-Frame-Options
+                value: DENY
+              - path: /*
+                name: X-Content-Type-Options
+                value: nosniff
+              - path: /*
+                name: Referrer-Policy
+                value: strict-origin-when-cross-origin
+            routes:
+              - type: rewrite
+                source: /*
+                destination: /index.html
+            envVars:
+              - key: NODE_VERSION
+                value: "20.18.0"
+              - key: BACKEND_HOST
+                fromService:
+                  type: web
+                  name: pipeline-studio-backend
+                  property: host
