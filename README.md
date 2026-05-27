@@ -1,65 +1,21 @@
-# Pipeline Studio - VectorShift Frontend Assessment
+# Pipeline Studio — VectorShift Frontend Technical Assessment
 
-Pipeline Studio is a ReactFlow-based workflow builder completed for the VectorShift frontend technical assessment. It implements the required node abstraction, improved styling, dynamic Text node behavior, and FastAPI backend integration for graph analysis.
+A ReactFlow-based pipeline builder with a config-driven node abstraction, a dynamic Text node that creates handles from `{{ variable }}` placeholders, and a FastAPI backend that validates the submitted graph as a DAG, returns its execution order, and identifies any cycles.
 
-## What Was Built
+Built for the VectorShift frontend technical assessment.
 
-- A reusable node abstraction for standard workflow nodes.
-- Five additional nodes: Transform, Filter, HTTP Request, Router, and Database.
-- A polished workflow-builder UI with a responsive node library, canvas controls, minimap, custom branding, and node-level context actions.
-- A Text node that resizes for readability, creates variable handles from `{{ variable }}` placeholders, and switches to internal scrolling after a sensible height limit.
-- A FastAPI endpoint that counts nodes and edges and checks whether the submitted graph is a directed acyclic graph.
-- Custom SVG, PNG, and ICO app icons.
+| | |
+|---|---|
+| Frontend | React 18, Vite 6, Tailwind CSS v4, shadcn/ui, ReactFlow, Zustand |
+| Backend | FastAPI, Pydantic, Uvicorn, pytest |
+| External services | None — no API keys required |
+| Deploy | `render.yaml` Blueprint (one click, both services wired automatically) |
 
-## Tech Stack
+---
 
-Frontend:
+## Running locally
 
-- React
-- ReactFlow
-- Zustand
-- CSS
-
-Backend:
-
-- FastAPI
-- Pydantic
-- Uvicorn
-
-No API keys or external service accounts are required.
-
-## Project Structure
-
-```txt
-backend/
-  main.py              FastAPI app and DAG parsing endpoint
-  requirements.txt    Python backend dependencies
-
-frontend/
-  public/
-    logo.svg          Source logo asset
-    logo.png          512px PNG logo
-    logo192.png       PWA icon
-    logo512.png       PWA icon
-    favicon.ico       Multi-size favicon
-  src/
-    App.js            App shell and header
-    NodeContextMenu.js
-    draggableNode.js
-    toolbar.js
-    ui.js             ReactFlow canvas and drag/drop behavior
-    submit.js         Frontend-to-backend submission
-    store.js          Zustand graph state and node actions
-    index.css         App styling
-    nodes/
-      BaseNode.js     Reusable node renderer
-      nodeDefinitions.js
-      textNode.js     Dynamic Text node implementation
-```
-
-## Running Locally
-
-Start the backend:
+### Backend
 
 ```bash
 cd backend
@@ -69,234 +25,239 @@ pip install -r requirements.txt
 uvicorn main:app --reload
 ```
 
-The backend runs at `http://localhost:8000`.
+Backend runs at `http://127.0.0.1:8000`. Endpoints:
 
-Start the frontend in another terminal:
+- `GET /` → `{"Ping":"Pong"}`
+- `GET /health` → `{"status":"ok","service":"pipeline-studio-backend","version":"..."}`
+- `POST /pipelines/parse` → full pipeline analysis
+
+### Frontend
 
 ```bash
 cd frontend
 npm install
-npm start
+npm run dev
 ```
 
-The frontend runs at `http://localhost:3000`.
+Frontend runs at `http://127.0.0.1:3000`.
 
-If the backend is hosted somewhere else, set:
+If your backend lives elsewhere, set the URL before starting Vite:
 
 ```bash
-REACT_APP_API_BASE_URL=http://localhost:8000 npm start
+VITE_API_BASE_URL=http://localhost:8000 npm run dev
 ```
 
-## Assessment Requirements Mapping
+### Quality commands
 
-### Part 1: Node Abstraction
+```bash
+cd frontend
+npm run lint        # ESLint, zero-warning policy
+npm run typecheck   # tsc against jsconfig.json
+npm run build       # Production bundle in dist/
+npm run preview     # Serve the production bundle for verification
+npm run check       # lint + typecheck + build (run before committing)
 
-The reusable node abstraction lives in `frontend/src/nodes/BaseNode.js`.
-
-Standard nodes are defined through configuration in `frontend/src/nodes/nodeDefinitions.js`. Each node config can declare:
-
-- `label`
-- `kicker`
-- `title`
-- `tone`
-- `description`
-- `fields`
-- `inputs`
-- `outputs`
-
-The app converts those definitions into ReactFlow node components through `createNodeComponent`. This means a new standard node can be added by creating a new config object instead of copying an entire component.
-
-The five added nodes are:
-
-- `transform`
-- `filter`
-- `httpRequest`
-- `router`
-- `database`
-
-### Part 2: Styling
-
-The UI is styled in `frontend/src/index.css`.
-
-The interface includes:
-
-- Branded app header
-- Dark node library
-- Hover tooltips for node descriptions
-- Light ReactFlow canvas
-- Themed node cards
-- Custom handles
-- Styled controls, minimap, context menu, and submit button
-- Responsive layout for narrower screens
-
-### Part 3: Text Node Logic
-
-The Text node lives in `frontend/src/nodes/textNode.js`.
-
-It supports:
-
-- Width growth up to a maximum width.
-- Height growth up to a maximum textarea height.
-- Internal scrolling after the textarea reaches its max height.
-- Variable extraction from valid placeholders such as `{{ input }}`.
-- One left-side handle per unique variable.
-
-The variable matcher accepts JavaScript-style identifiers:
-
-```txt
-{{ input }}
-{{ customer_name }}
-{{ $value }}
-{{ _metadata }}
+cd backend
+pip install -r requirements-dev.txt
+python -m pytest    # 12 tests covering analyze_graph and the API surface
 ```
 
-It rejects invalid identifiers and reserved words.
+---
 
-### Part 4: Backend Integration
+## Project structure
 
-The submit button in `frontend/src/submit.js` sends the current ReactFlow `nodes` and `edges` to:
+```
+backend/
+  main.py                       FastAPI app + Kahn's-algorithm graph analyzer
+  requirements.txt              Runtime deps
+  requirements-dev.txt          + pytest, httpx
+  tests/test_pipeline.py        Unit + endpoint tests
 
-```txt
-POST /pipelines/parse
+frontend/
+  index.html                    Vite entry point
+  vite.config.js
+  components.json               shadcn/ui config
+  jsconfig.json                 Editor + tsc typecheck config
+  src/
+    main.jsx                    React entry
+    App.jsx                     App shell
+    index.css                   Tailwind v4 entry + @theme tokens + ReactFlow overrides
+    store.js                    Zustand store (graph + dialog + persist)
+    submit.js                   POST /pipelines/parse helper
+    lib/utils.js                cn() helper
+    components/
+      AppHeader.jsx             Brand + submit button
+      NodeLibrary.jsx           Sidebar with draggable modules
+      DraggableNodeCard.jsx     A single draggable module
+      PipelineCanvas.jsx        ReactFlow canvas + cycle/rank decoration
+      CanvasToolbar.jsx         Import / export / clear actions
+      EmptyCanvasHint.jsx       Empty-state overlay
+      NodeContextMenu.jsx       Right-click menu (shadcn DropdownMenu)
+      PipelineResultDialog.jsx  Result modal — counts + DAG + order + cycle
+      RenameDialog.jsx          Rename modal (replaces window.prompt)
+      ui/                       shadcn primitives (button, dialog, ...)
+    nodes/
+      BaseNode.jsx              Config-driven node renderer + NodeCard chrome
+      TextNode.jsx              Dynamic Text node with variable extraction
+      nodeDefinitions.js        All node configs (single source of truth)
+
+render.yaml                     Two-service Render Blueprint (backend + static)
+docs/superpowers/specs/         Original design spec
 ```
 
-The backend returns:
+---
+
+## Assessment requirements
+
+### Part 1 — Node abstraction
+
+The reusable abstraction lives in [`frontend/src/nodes/BaseNode.jsx`](frontend/src/nodes/BaseNode.jsx). Standard nodes are pure configuration in [`frontend/src/nodes/nodeDefinitions.js`](frontend/src/nodes/nodeDefinitions.js). Each entry can declare:
+
+- `label`, `kicker`, `title` — display strings
+- `tone` — color (`green` `violet` `blue` `amber` `red` `cyan` `pink` `slate` `black`)
+- `description` — sidebar tooltip + in-node copy
+- `fields` — array of `{ name, label, type?, options?, defaultValue?, placeholder?, rows? }`
+- `inputs`, `outputs` — handle definitions
+
+`createNodeComponent(config)` turns a definition into a ReactFlow component automatically. The five new nodes — `transform`, `filter`, `httpRequest`, `router`, `database` — are pure configuration.
+
+A new node automatically inherits:
+
+- Sidebar rendering, drag-and-drop creation, snap-to-grid placement
+- Default field values
+- Tone-colored left accent bar and minimap stroke
+- Input/output handles with auto-spaced vertical positions
+- Field controls (text, select, textarea)
+- Right-click context menu (rename / duplicate / copy ID / delete)
+- Execution-order badge + cycle marker (when the backend reports them)
+- Submission to `/pipelines/parse` as part of the graph
+
+To add a node:
+
+```js
+analytics: {
+  label: 'Analytics',
+  kicker: 'Insight',
+  title: 'Analytics',
+  tone: 'cyan',
+  description: 'Aggregates metrics over the upstream stream.',
+  fields: [
+    { name: 'window', label: 'Window', type: 'select',
+      defaultValue: '5m', options: ['1m', '5m', '1h'] },
+  ],
+  inputs: [{ id: 'events' }],
+  outputs: [{ id: 'summary' }],
+}
+```
+
+Custom nodes (like `TextNode`) skip the abstraction and supply their own `component`.
+
+### Part 2 — Styling
+
+A "modern dev tool" personality (Linear / Vercel / Retool reference points). Tailwind CSS v4 with `@theme` tokens lives in [`frontend/src/index.css`](frontend/src/index.css). shadcn/ui primitives provide accessible building blocks (Button, Dialog, Tooltip, DropdownMenu, Input, Label, Badge, Separator).
+
+Highlights:
+
+- Inter (variable) for UI typography; JetBrains Mono for IDs and code.
+- Confident slate-on-white palette with a single brand-blue accent.
+- Node cards with a left tone-colored accent bar instead of a top border.
+- ReactFlow controls, minimap, edges, and handles fully restyled.
+- Empty-canvas state when no nodes are placed.
+- Real focus rings and keyboard accessibility on every interactive element.
+- Submit-result modal and rename modal replace `window.alert` / `window.prompt`.
+
+### Part 3 — Text node logic
+
+[`frontend/src/nodes/TextNode.jsx`](frontend/src/nodes/TextNode.jsx):
+
+- **Width** grows from 264px to 520px based on longest line; **height** grows from 96px to 240px based on line count.
+- After 240px the textarea scrolls **internally** instead of growing further.
+- **Variable detection** uses `/\{\{\s*([A-Za-z_$][A-Za-z0-9_$]*)\s*\}\}/g` and rejects JS reserved words; duplicates are de-duped.
+- Each unique variable becomes a left-side input handle (`${nodeId}-${variableName}`). Handle internals are updated with `useUpdateNodeInternals`.
+- Detected variables are surfaced as monospaced badges under the textarea.
+
+### Part 4 — Backend integration
+
+Frontend ([`frontend/src/submit.js`](frontend/src/submit.js)) `POST`s `{ nodes, edges }` to `/pipelines/parse`. The Submit button in the header (`AppHeader.jsx`) dispatches store actions for loading / success / error, which the `PipelineResultDialog` subscribes to. No `window.alert` anywhere in the app.
+
+Backend ([`backend/main.py`](backend/main.py)) returns a full analysis:
 
 ```json
 {
   "num_nodes": 3,
   "num_edges": 2,
-  "is_dag": true
+  "is_dag": true,
+  "cycle_node_ids": [],
+  "cycle_edge_ids": [],
+  "execution_order": ["a", "b", "c"],
+  "invalid_edges": []
 }
 ```
 
-The frontend displays those values in a user-friendly alert.
+DAG detection uses **Kahn's algorithm**: build an adjacency list and indegree map, peel zero-indegree nodes, decrement neighbors. If every node is visited, the graph is acyclic; otherwise the remaining nodes are the cycle members. Edges referencing missing nodes appear under `invalid_edges` and cause `is_dag: false`.
 
-## DAG Detection
+Time: `O(nodes + edges)`. Space: `O(nodes + edges)`.
 
-The DAG check is implemented in `backend/main.py` using Kahn's algorithm.
+---
 
-The algorithm:
+## Beyond the brief
 
-1. Collects all node IDs.
-2. Builds an adjacency list.
-3. Counts each node's incoming edges.
-4. Starts with nodes that have no incoming edges.
-5. Removes nodes from the queue and reduces neighbor indegrees.
-6. If every node is visited, the graph is a DAG.
-7. If any nodes remain unvisited, the graph contains a cycle.
+These additions are scoped to deepen what was asked for, not to invent new requirements:
 
-Invalid edges that point to missing nodes return `is_dag: false`.
+- **Persistent canvas.** The graph auto-saves to `localStorage` (via Zustand's `persist` middleware) so a refresh restores everything.
+- **JSON import / export.** Canvas toolbar lets you download the current pipeline as `pipeline-YYYYMMDD-HHMM.json` and re-import the same shape later.
+- **Cycle visualization.** When the backend reports a cycle, the affected nodes get a red ring and a `CYCLE` chip, and the affected edges turn red.
+- **Execution order labels.** After a successful DAG analysis each node card shows a small numeric badge corresponding to its topological execution rank.
+- **Backend hardening.** `/health` endpoint, configurable CORS via `CORS_ALLOWED_ORIGINS` env var, structured logging, Pydantic field constraints + a 400 handler that returns `{detail, errors}`.
+- **Tests.** 12 backend tests (`backend/tests/test_pipeline.py`) covering DAG, cycle, empty graph, invalid edges, diamond, disconnected components, and every endpoint.
+- **`render.yaml` Blueprint.** One-click deploy of both services to Render with the URLs wired automatically (see below).
 
-Complexity:
+---
 
-- Time: `O(nodes + edges)`
-- Space: `O(nodes + edges)`
+## Deploying to Render
 
-## Extensibility
+The repo ships with [`render.yaml`](render.yaml), a Blueprint that defines both services and wires the URLs together automatically.
 
-The project is intentionally structured so most features apply to future nodes automatically.
+1. Push to a GitHub repo Render has access to.
+2. In the Render dashboard, click **New → Blueprint** and select this repo.
+3. Click **Apply**. Render provisions:
+   - `pipeline-studio-backend` (Python web service from `backend/`)
+   - `pipeline-studio-frontend` (static site built from `frontend/dist`)
+4. Render auto-wires:
+   - `BACKEND_HOST` (frontend → backend) so the frontend bundles `VITE_API_BASE_URL=https://<backend-host>` at build time.
+   - `FRONTEND_HOST` (backend → frontend) so `main.py` appends the frontend origin to its CORS allowlist on startup.
 
-To add a new standard node, add a config entry in `frontend/src/nodes/nodeDefinitions.js`:
+No manual environment configuration is needed for the first deploy.
 
-```js
-newNodeType: {
-  label: 'New Node',
-  kicker: 'Category',
-  title: 'New Node',
-  tone: 'blue',
-  description: 'What this node does.',
-  fields: [
-    {
-      name: 'setting',
-      label: 'Setting',
-      defaultValue: 'Default value',
-    },
-  ],
-  inputs: [{ id: 'input' }],
-  outputs: [{ id: 'output' }],
-}
-```
+---
 
-That node will automatically get:
+## Smoke tests
 
-- Toolbar rendering
-- Drag-and-drop creation
-- Default field initialization
-- Base node layout and styling
-- Input/output handles
-- Editable form fields
-- Toolbar hover description
-- Right-click context menu actions
-- Rename support
-- Duplicate support
-- Delete support
-- Submission to the backend as part of the graph
-
-Custom nodes can still be created when a node needs specialized behavior. The Text node is the example of this pattern.
-
-## Product Polish Added
-
-These additions are intentionally small and directly tied to workflow-builder usability:
-
-- Right-click context menu for placed nodes.
-- Rename, duplicate, copy ID, and delete actions.
-- Toolbar hover tooltips sourced from node definitions.
-- Custom logo and app metadata.
-
-A separate documentation page was intentionally not added because it would increase surface area without helping the core assessment. The README and inline tooltips provide enough guidance while keeping the app focused.
-
-## Validation
-
-Frontend lint:
-
+### Backend
 ```bash
-cd frontend
-npx eslint src --max-warnings=0
-```
+curl -s http://127.0.0.1:8000/health
+# {"status":"ok","service":"pipeline-studio-backend","version":"..."}
 
-Backend syntax check:
-
-```bash
-cd backend
-python -m py_compile main.py
-```
-
-Backend API smoke test:
-
-```bash
 curl -s -X POST http://127.0.0.1:8000/pipelines/parse \
   -H 'Content-Type: application/json' \
-  -d '{"nodes":[{"id":"a"},{"id":"b"}],"edges":[{"source":"a","target":"b"}]}'
+  -d '{"nodes":[{"id":"a"},{"id":"b"},{"id":"c"}],
+       "edges":[{"source":"a","target":"b"},{"source":"b","target":"c"}]}'
+# {"num_nodes":3,"num_edges":2,"is_dag":true,
+#  "cycle_node_ids":[],"cycle_edge_ids":[],
+#  "execution_order":["a","b","c"],"invalid_edges":[]}
+
+curl -s -X POST http://127.0.0.1:8000/pipelines/parse \
+  -H 'Content-Type: application/json' \
+  -d '{"nodes":[{"id":"a"},{"id":"b"}],
+       "edges":[{"source":"a","target":"b"},{"source":"b","target":"a"}]}'
+# {"num_nodes":2,"num_edges":2,"is_dag":false,
+#  "cycle_node_ids":["a","b"],"cycle_edge_ids":["a->b","b->a"],
+#  "execution_order":[],"invalid_edges":[]}
 ```
 
-Expected response:
-
-```json
-{"num_nodes":2,"num_edges":1,"is_dag":true}
+### Frontend
+```bash
+cd frontend
+npm run check       # lint + typecheck + build all clean
 ```
 
-## Known Notes
-
-- The starter uses Create React App. CRA may print Browserslist or Babel preset maintenance warnings during local commands. These warnings do not prevent the app from compiling or running.
-- Do not include `node_modules`, `.venv`, `build`, `__pycache__`, `.DS_Store`, or `.git` in the final submission zip.
-
-## Submission Checklist
-
-Before submitting:
-
-1. Start the backend.
-2. Start the frontend.
-3. Drag several nodes onto the canvas.
-4. Add a Text node with a placeholder like `{{ input }}`.
-5. Confirm the Text node creates a left-side input handle.
-6. Connect nodes.
-7. Click Submit Pipeline.
-8. Confirm the alert shows node count, edge count, and DAG status.
-9. Zip the project without generated dependency folders.
-
-Suggested zip name:
-
-```txt
-FirstName_LastName_technical_assessment.zip
-```
